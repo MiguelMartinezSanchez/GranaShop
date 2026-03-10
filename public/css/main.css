@@ -1,0 +1,689 @@
+/**************************************************/
+/****************NAVEGACION************************/
+/**************************************************/
+/*Tipografia navegacion*/
+@import url('https://fonts.googleapis.com/css2?family=M+PLUS+1+Code:wght@500&display=swap');
+
+/*Tipografia GranaShop navegacion*/
+@import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap');
+
+
+.navbar-nav .nav-link {
+    color: #000 !important;
+    border-color: transparent;
+    margin-left: 1.5rem;
+
+    transition: none;
+    font-weight: bold;
+    font-size: medium;
+    text-decoration: none;
+    font-family: Helvetica, sans-serif;
+}
+
+.navbar-brand {
+    font-family: 'Alfa Slab One', cursive;
+}
+
+.navbar .navbar-toggler:focus {
+    box-shadow: none
+}
+
+.navbar-nav .nav-link.active,
+.border-red {
+    border-bottom: 3px solid #b71c1c
+}
+
+.navbar-nav .nav-link:hover {
+    border-bottom: 3px solid #b71c1c
+}
+
+@media (max-width: 770px) {
+
+    .dropdown-menu {
+        text-align: center;
+    }
+
+    .navbar-nav .nav-link.active,
+    .navbar-nav .nav-link:hover {
+        background-color: #b71c1c;
+        color: #fff !important
+    }
+
+    .navbar-nav .nav-link {
+        border: 3px solid transparent;
+        margin: 0.7rem 0;
+        border-radius: 10px;
+    }
+}
+
+
+
+/**************************************************/
+/*Animacion de categorias en Inicio*/
+/**************************************************/
+#animado a {
+    text-decoration: none;
+    color: white;
+}
+
+#animado {
+    transition: all 0.5s;
+    animation: animacion 1s;
+}
+
+@keyframes animacion {
+    0% {
+        transform: translateX(80px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+/*Agrandar cards categorias inicio al pasar el cursor*/
+#cardsHover {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+#cardsHover:hover {
+    box-shadow: 5px 6px 6px 2px #e9ecef;
+    transform: scale(1.1);
+}
+
+/*Redimensionar Carousel Inicio*/
+.carousel .item {
+    height: 400px;
+}
+
+.item img {
+    position: absolute;
+    object-fit: cover;
+    top: 0;
+    left: 0;
+    min-height: 500px;
+}
+
+div h2 {
+    font-family: 'M PLUS 1 Code', sans-serif;
+    font-weight: bold;
+    font-size: xx-large;
+}
+
+/**************************************************/
+/*****LISTADO DE PRODUCTOS Y SIDEBAR FILTROS*******/
+/**************************************************/
+#burgundy {
+    color: rgb(153, 40, 59)
+}
+
+#orange,
+select,
+.btn {
+    color: rgb(153, 40, 59)
+}
+
+.form-group {
+    margin-bottom: 5px
+}
+
+label {
+    padding-left: 10px
+}
+
+.form-group:last-child {
+    margin-bottom: 0
+}
+
+h6 {
+    margin-bottom: 0px
+}
+
+#sort {
+    outline: none;
+    border: none
+}
+
+.btn {
+    border: 1px solid rgb(153, 40, 59);
+    border-radius: 10px;
+    background-color: #fff
+}
+
+.btn:hover {
+    color: black;
+    background-color: white;
+}
+
+.card-body {
+    padding: 8px
+}
+
+.sign {
+    width: 25px;
+    height: 25px
+}
+
+@media(min-width:1201px) {
+    #animado {
+        height: 400px;
+    }
+}
+
+@media(min-width:1200px) {
+
+
+    #cardsHover {
+        width: 100%;
+        height: 100%;
+    }
+
+    .text {
+        display: none
+    }
+
+    #sidebar {
+        width: 14%;
+        padding: 20px;
+        float: left
+    }
+
+    #products {
+        width: 86%;
+        padding: 10px;
+        margin: 0;
+        float: right
+    }
+
+    .fa-user,
+    .fa-shopping-cart {
+        font-size: 20px;
+        padding-left: 20px
+    }
+
+    .card {
+        width: 200px;
+        height: 330px;
+        border: none
+    }
+
+    .card-img-top {
+        width: 295px;
+        height: 200px;
+        border-radius: 10px
+    }
+
+    .filter,
+    #mobile-filter {
+        display: none
+    }
+}
+
+@media(min-width:992px) and (max-width:1199px) {
+    .fa-user {
+        margin-left: 160px
+    }
+
+    .text {
+        display: none
+    }
+
+    #sidebar {
+        width: 14%;
+        padding: 20px;
+        float: left
+    }
+
+    #products {
+        width: 86%;
+        padding: 10px;
+        margin: 0;
+        float: right
+    }
+
+    .card {
+        width: 200px;
+        height: 330px;
+        border: none
+    }
+
+    .card-img-top {
+        width: 200px;
+        height: 200px;
+        border-radius: 10px
+    }
+
+    .fa-plus,
+    .fa-minus {
+        font-size: 12px
+    }
+
+    .sign {
+        height: 25px
+    }
+
+    .price {
+        width: 99px
+    }
+
+    .filter,
+    #mobile-filter {
+        display: none
+    }
+}
+
+@media(min-width:768px) and (max-width:991px) {
+
+    .fa-user {
+        margin-left: 80px
+    }
+
+    .text {
+        display: none
+    }
+
+    #sidebar {
+        width: 14%;
+        padding: 20px;
+        float: left
+    }
+
+    #products {
+        width: 86%;
+        padding: 10px;
+        margin: 0;
+        float: right
+    }
+
+    .card {
+        border: none
+    }
+
+    .filter,
+    #mobile-filter {
+        display: none
+    }
+}
+
+@media(min-width:576px) and (max-width:767px) {
+
+    .text {
+        display: none
+    }
+
+    #sidebar {
+        width: 14%;
+        padding: 20px;
+        float: left
+    }
+
+    #products {
+        width: 86%;
+        padding: 10px;
+        margin: 0;
+        float: right
+    }
+
+    .card {
+        border: none
+    }
+
+    #off {
+        padding-left: 2px
+    }
+
+    #sorting span,
+    #res {
+        font-size: 14px
+    }
+
+    .filter,
+    #mobile-filter {
+        display: none
+    }
+}
+
+@media(max-width:575px) {
+
+
+    #sidebar {
+        display: none
+    }
+
+    .filter {
+        margin-left: 70%;
+        margin-top: 2%
+    }
+
+    #sorting,
+    #res {
+        font-size: 12px;
+        margin-top: 2%
+    }
+}
+
+/******** VISTA singleProduct ********/
+.imgSingleProduct {
+    justify-content: center;
+    align-items: center;
+    width: calc(100% + 15px);
+    height: 300px;
+    border: solid 1px #e8e8e8;
+    box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    padding: 15px
+}
+
+.imgSugeridos {
+    width: 100%;
+}
+/**************** CARRITO COMPRA *********/
+#carroVacio {
+    display: block;
+}
+
+/*****************  VISTA DE pantallaCompra  *************/
+.inlineimage {
+    max-width: 470px;
+    margin-right: 8px;
+    margin-left: 10px;
+    float: right;
+}
+
+.images {
+    display: inline-block;
+    max-width: 98%;
+    height: auto;
+    width: 22%;
+    margin: 1%;
+    left: 20px;
+    text-align: center
+}
+
+.confirmar {
+    display: inline-block;
+    background: #0e8ce4;
+    border-radius: 5px;
+    height: 48px;
+    -webkit-transition: all 200ms ease;
+    -moz-transition: all 200ms ease;
+    -ms-transition: all 200ms ease;
+    -o-transition: all 200ms ease;
+    transition: all 200ms ease
+}
+
+.confirmar a {
+    display: block;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 48px;
+    color: #FFFFFF;
+    padding-left: 35px;
+    padding-right: 35px
+}
+
+.confirmar:hover {
+    opacity: 0.8
+}
+
+.cart_section {
+    width: 100%;
+    padding-top: 93px;
+    padding-bottom: 111px;
+    font-family: 'Rubik', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    background: #E0E0E0;
+    color: #000000;
+    border-radius: 10px;
+}
+
+.cart_title {
+    font-size: 30px;
+    font-weight: 500
+}
+
+.cart_items {
+    margin-top: 8px
+}
+
+.cart_list {
+    border: solid 1px #e8e8e8;
+    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);
+    background-color: #fff
+}
+
+.cart_item {
+    width: 100%;
+    padding: 15px;
+    padding-right: 46px
+}
+
+.cart_item_image {
+    width: 133px;
+    height: 133px;
+    float: left
+}
+
+.cart_item_image img {
+    max-width: 100%
+}
+
+.cart_item_info {
+    width: calc(100% - 133px);
+    float: left;
+    padding-top: 18px
+}
+
+.cart_item_name {
+    margin-left: 7.53%
+}
+
+.cart_item_title {
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.5)
+}
+
+.cart_item_text {
+    font-size: 18px;
+    margin-top: 35px
+}
+
+
+.cart_item_price {
+    text-align: right
+}
+
+.cart_item_total {
+    text-align: right
+}
+
+.order_total {
+    width: 100%;
+    height: 60px;
+    margin-top: 30px;
+    border: solid 1px #e8e8e8;
+    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);
+    padding-right: 46px;
+    padding-left: 15px;
+    background-color: #fff
+}
+
+.order_total_title {
+    display: inline-block;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.5);
+    line-height: 60px
+}
+
+.order_total_amount {
+    display: inline-block;
+    font-size: 18px;
+    font-weight: 500;
+    margin-left: 26px;
+    line-height: 60px
+}
+
+.cart_buttons {
+    margin-top: 60px;
+    text-align: right
+}
+
+.cart_button_clear {
+    display: inline-block;
+    border: none;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 48px;
+    color: rgba(0, 0, 0, 0.5);
+    background: #FFFFFF;
+    border: solid 1px #b2b2b2;
+    padding-left: 35px;
+    padding-right: 35px;
+    outline: none;
+    cursor: pointer;
+    margin-right: 26px
+}
+
+.cart_button_clear:hover {
+    border-color: #0e8ce4;
+    color: #0e8ce4
+}
+
+.cart_button_checkout {
+    display: inline-block;
+    border: none;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 48px;
+    color: #FFFFFF;
+    padding-left: 35px;
+    padding-right: 35px;
+    outline: none;
+    cursor: pointer;
+    vertical-align: top
+}
+
+/*************************** LOGIN ******/
+.login-container {
+    margin-top: 5%;
+    margin-bottom: 5%;
+}
+
+@media (max-width: 768px) {
+    .login-form-2  img {
+        width: 230px;
+        height: 170px;
+        padding: 10px;
+    }
+}
+
+@media (min-width: 770px) {
+    .login-form-2  img {
+        width: 250px;
+        height: 170px;
+    }
+}
+
+.login-form-1 {
+    padding: 9%;
+    background: #282726;
+    box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 9px 26px 0 rgba(0, 0, 0, 0.19);
+}
+
+.login-form-1 h3 {
+    text-align: center;
+    margin-bottom: 12%;
+    color: #fff;
+}
+
+.login-form-2 {
+    padding: 5%;
+    background: #f05837;
+    box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 9px 26px 0 rgba(0, 0, 0, 0.19);
+}
+
+
+.login-form-2 h3 {
+    text-align: center;
+    margin-bottom: 12%;
+    color: #fff;
+}
+
+.btnSubmit {
+    font-weight: 600;
+    width: 50%;
+    color: #282726;
+    background-color: #fff;
+    border: none;
+    border-radius: 1.5rem;
+    padding: 2%;
+}
+
+.btnForgetPwd {
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.btnForgetPwd:hover {
+    text-decoration: none;
+    color: #fff;
+}
+
+/************ ADMINISTRACION *************/
+
+td img {
+    width: 50px;
+    height: 50px;
+}
+
+
+/******************* VISTA PERFIL *********************/
+.form-control:focus {
+    box-shadow: none;
+    border-color: #b71c1c
+}
+
+.profile-button {
+    box-shadow: none;
+    border: none
+}
+
+.profile-button:hover {
+    background: black;
+    color: white;
+}
+
+.profile-button:focus {
+    background: black;
+    box-shadow: none;
+    color: white;
+}
+
+.profile-button:active {
+    background: #682773;
+    box-shadow: none
+}
+
+.labels {
+    font-size: 11px
+}
+
+/*********** VISTA DE MARCAS Y SUS RESPECTIVOS PRODUCTOS PARA USUARIO ***************/
+@media (max-width: 768px) {
+    .marcas img {
+        width: 230px;
+        height: 170px;
+        padding: 10px;
+    }
+}
+
+@media (min-width: 770px) {
+    .marcas img {
+        width: 300px;
+        height: 170px;
+    }
+}
