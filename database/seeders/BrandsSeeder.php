@@ -17,7 +17,7 @@ class BrandsSeeder extends Seeder
         DB::table('brands')->insert([
             'nombre' => 'ADIDAS',
             'descripcion' => "Adidas AG ​ es una compañía multinacional alemana fundada en 1949 dedicada a la fabricación de equipamiento deportivo y productos de moda. La empresa también es patrocinadora de eventos y figuras deportivas a nivel mundial. Es el primer mayor fabricante del rubro en el mundo.",
-            'foto' => "/img/brands/adidas.jpg",
+            'foto' => asset('img/brands/adidas.jpg'),
         ]);
 
         DB::table('brands')->insert([
