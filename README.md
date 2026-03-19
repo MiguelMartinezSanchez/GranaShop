@@ -15,10 +15,10 @@ Para una guía más amplia y más cosas sobre el proyecto, accede a la **[Docume
 
 ## Link
 
-Aplicación disponible en el siguiente **[link](http://uniquestyle.herokuapp.com/)**
+Aplicación disponible en el siguiente **[link]()**
 
 ## License
 
 Aplicación desarrollada por **[Miguel Angel Martinez Sanchez](https://www.linkedin.com/in/mams1991)**
 
-See the **[License file](https://github.com/SebasBretones/TuRestaurante/blob/master/LICENSE.md)** file for license rights and limitations (MIT).
+See the **[License file]()** file for license rights and limitations (MIT).
