@@ -1,5 +1,14 @@
 <x-plantilla>
     <x-slot name="titulo">GranaShop | {{ $marca->nombre }}</x-slot>
+            @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
     <div class="container">
         <!-- Sección de la marca -->

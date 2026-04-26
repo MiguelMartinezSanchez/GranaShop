@@ -2,6 +2,15 @@
     <x-slot name="titulo">Editar Marca</x-slot>
     <div class="d-flex justify-content-center text-center p-5">
         <div class="col-md-6 login-form-2">
+                    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
             <form name="sd" method="POST" enctype="multipart/form-data" action="{{ route('adminBrands.update', $marca) }}">
                 @csrf
                 @method("PUT")

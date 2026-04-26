@@ -5,6 +5,9 @@ use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BrandsController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PdfController;
+use App\Http\Controllers\Admin\ProductPdfController;
+use App\Http\Controllers\Admin\BrandPdfController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,3 +49,13 @@ Route::get('/logout', [UserController::class, 'logout'])->name('account.logout')
 //-----------------------Ruta administracion productos
 Route::resource('/adminProducts', ProductsController::class)->middleware('admin');
 Route::resource('/adminBrands', BrandsController::class)->middleware('admin');
+
+//Ruta descargar PDF
+Route::get('/pdf/factura', [PdfController::class, 'invoice']);
+
+Route::get('/admin/products/pdf', [ProductPdfController::class, 'export'])
+    ->name('admin.products.pdf');
+
+Route::get('/admin/brands/pdf', [BrandPdfController::class, 'export'])
+    ->name('admin.brands.pdf');
+    

@@ -7,180 +7,246 @@ use App\Models\Brands;
 use App\Models\Categories;
 use App\Models\Products;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //Referenciar marca y categoria con su ID
         $brandsNombres = Products::brandsNombres();
         $categoriesNombres = Products::categoriesNombres();
 
-        $productos = Products::paginate(20); //Guardar todos los productos para mostrarlos en ADMINISTRACION DE PRODUCTOS
+        $productos = Products::paginate(20);
+
         return view('administration.productos', compact('productos', 'brandsNombres', 'categoriesNombres'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         $brandsNombres = Brands::all();
         $categoriesNombres = Categories::all();
+
         return view('administration.create', compact('brandsNombres', 'categoriesNombres'));
+        
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        try {
-            //Guardar imagen producto nuevo
-            $image = $request->file('foto');
-            $image->move('./img/products', $image->getClientOriginalName());
+public function store(Request $request)
+{
+    // ✅ VALIDACIÓN
+    $request->validate([
+        'nombre' => 'required|string|min:3|max:255',
+        'precio' => 'required|numeric|min:0|max:999999',
+        'marca' => 'required|exists:brands,id',
+        'categoria' => 'required|exists:categories,id',
+        'descripcion' => 'required|string|min:5',
+        'foto' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048'
+    ], [
+        'nombre.required' => 'El nombre del producto es obligatorio',
+        'nombre.min' => 'El nombre debe tener al menos 3 caracteres',
+        'nombre.max' => 'El nombre no puede superar los 255 caracteres',
 
-            //Insertar ruta de la imagen subida al campo -imagen-
-            $newProduct = $request->all();
-            $newProduct['foto'] = '/img/products/' . $image->getClientOriginalName();
-            Products::create($newProduct);
-        } catch (\Exception $ex) {
-            return back();
-        }
-        $indexAdmin = new ProductsController();
-        return $indexAdmin->index();
+        'precio.required' => 'El precio es obligatorio',
+        'precio.numeric' => 'El precio debe ser un número',
+        'precio.min' => 'El precio no puede ser negativo',
+        'precio.max' => 'El precio es demasiado alto',
+
+        'marca.required' => 'Debes seleccionar una marca',
+        'marca.exists' => 'La marca seleccionada no es válida',
+
+        'categoria.required' => 'Debes seleccionar una categoría',
+        'categoria.exists' => 'La categoría seleccionada no es válida',
+
+        'descripcion.required' => 'La descripción es obligatoria',
+        'descripcion.min' => 'La descripción debe tener al menos 5 caracteres',
+
+        'foto.required' => 'Debes subir una imagen',
+        'foto.image' => 'El archivo debe ser una imagen',
+        'foto.mimes' => 'La imagen debe ser JPG, PNG o WEBP',
+        'foto.max' => 'La imagen no puede superar los 2MB'
+    ]);
+
+    try {
+        // ✅ GUARDAR IMAGEN
+        $path = $request->file('foto')->store('products', 'public');
+
+        // ✅ CREAR PRODUCTO
+        Products::create([
+            'nombre' => $request->nombre,
+            'precio' => $request->precio,
+            'marca' => $request->marca,
+            'categoria' => $request->categoria,
+            'descripcion' => $request->descripcion,
+            'foto' => $path
+        ]);
+
+        return redirect()->route('products.index')
+            ->with('success', 'Producto creado correctamente');
+
+    } catch (\Exception $ex) {
+        return back()
+            ->withErrors(['general' => 'Error al crear el producto'])
+            ->withInput(); // 🔥 MUY IMPORTANTE
     }
+}
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Products  $products
-     * @return \Illuminate\Http\Response
-     */
     public function show(Request $request, $categoria)
     {
         $brandsNombres = Products::brandsNombres();
         $categoriesNombres = Products::categoriesNombres();
 
         $marcas = Brands::all();
-        $productos = Products::where('categoria', '=', $categoria)->brand($request->marca)->paginate(6);
+
+        $productos = Products::where('categoria', $categoria)
+            ->when($request->marca, function ($query) use ($request) {
+                $query->where('marca', $request->marca);
+            })
+            ->paginate(6);
+
         return view('categories.show', compact('productos', 'marcas', 'brandsNombres', 'categoriesNombres'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Products  $products
-     * @return \Illuminate\Http\Response
-     */
     public function edit($product)
     {
         $brandsNombres = Brands::all();
         $categoriesNombres = Categories::all();
 
-        $producto = Products::find($product);
+        $producto = Products::findOrFail($product);
+
         return view('administration.edit', compact('producto', 'brandsNombres', 'categoriesNombres'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Products  $products
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $product)
-    {
-        try {
-            //Guardar imagen producto nuevo
-            $image = $request->file('foto');
-            $image->move('./img/products', $image->getClientOriginalName());
+public function update(Request $request, $product)
+{
+    // VALIDACIÓN
+    $request->validate([
+        'nombre' => 'required|string|min:3|max:255',
+        'precio' => 'required|numeric|min:0|max:999999',
+        'marca' => 'required|exists:brands,id',
+        'categoria' => 'required|exists:categories,id',
+        'foto' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048'
+    ], [
+        'nombre.required' => 'El nombre del producto es obligatorio',
+        'nombre.min' => 'El nombre debe tener al menos 3 caracteres',
+        'nombre.max' => 'El nombre no puede superar los 255 caracteres',
 
-            Products::where('id', $product)
-                ->update(
-                    [
-                        'nombre' => $request->input('nombre'),
-                        'precio' => $request->input('precio'),
-                        'foto' => '/img/products/'. $image->getClientOriginalName(),
-                        'marca' => $request->input('marca'),
-                        'categoria' => $request->input('categoria')
-                    ]
-                );
-        } catch (\Exception $ex) {
-            //return back();
-            return $ex->getMessage();
+        'precio.required' => 'El precio es obligatorio',
+        'precio.numeric' => 'El precio debe ser un número',
+        'precio.min' => 'El precio no puede ser negativo',
+        'precio.max' => 'El precio es demasiado alto',
+
+        'marca.required' => 'Debes seleccionar una marca',
+        'marca.exists' => 'La marca seleccionada no es válida',
+
+        'categoria.required' => 'Debes seleccionar una categoría',
+        'categoria.exists' => 'La categoría seleccionada no es válida',
+
+        'foto.image' => 'El archivo debe ser una imagen',
+        'foto.mimes' => 'La imagen debe ser JPG, PNG o WEBP',
+        'foto.max' => 'La imagen no puede superar los 2MB'
+    ]);
+
+    try {
+        $producto = Products::findOrFail($product);
+
+        // SI HAY IMAGEN NUEVA
+        if ($request->hasFile('foto')) {
+
+            // borrar antigua
+            if ($producto->foto) {
+                Storage::disk('public')->delete($producto->foto);
+            }
+
+            $path = $request->file('foto')->store('products', 'public');
+            $producto->foto = $path;
         }
-        $index = new ProductsController();
-        return $index->index();
-    }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Products  $products
-     * @return \Illuminate\Http\Response
-     */
+        $producto->update([
+            'nombre' => $request->nombre,
+            'precio' => $request->precio,
+            'marca' => $request->marca,
+            'categoria' => $request->categoria,
+            'foto' => $producto->foto
+        ]);
+
+        return redirect()->route('products.index')
+            ->with('success', 'Producto actualizado correctamente');
+
+    } catch (Exception $ex) {
+        return back()->withErrors('Error al actualizar el producto');
+    }
+}
+
     public function destroy($producto)
     {
-        //Recibo por parametro ID de producto para borrarlo
         try {
-            $p = Products::find($producto);
+            $p = Products::findOrFail($producto);
+
+            if ($p->foto) {
+                Storage::disk('public')->delete($p->foto);
+            }
+
             $p->delete();
+
+            return back()->with('success', 'Producto eliminado');
+
         } catch (Exception $ex) {
-            return back();
-        }
-        return back();
-    }
-
-    //---------------------------- MOSTRAR PRODUCTOS ORDENADOS POR PRECIO
-    public function filtroPrecio(Request $request)
-    {
-        $brandsNombres = Products::brandsNombres();
-        $categoriesNombres = Products::categoriesNombres();
-        $marcas = Brands::all();
-        if ($request->precio == "ASC") {
-            $productos = Products::where('categoria', '=', $request->categoria)->orderBy('precio', $request->precio ?? 'ASC')->paginate(6);
-            return view('categories.show', compact('productos', 'marcas', 'request', 'brandsNombres', 'categoriesNombres'));
-        } elseif ($request->precio = "DESC") {
-            $productos = Products::where('categoria', '=', $request->categoria)->orderBy('precio', $request->precio ?? 'DESC')->paginate(6);
-            return view('categories.show', compact('productos', 'marcas', 'request', 'brandsNombres', 'categoriesNombres'));
+            return back()->withErrors('Error al eliminar');
         }
     }
 
-    //----------------------------- VISTA DE UN SOLO PRODUCTO
-    public function singleProduct(Request $request) //Mostrar el producto para verlo recibiedo la id desde la vista
-    {
-        $brandsNombres = Products::brandsNombres();
-        $categoriesNombres = Products::categoriesNombres();
+public function filtroPrecio(Request $request)
+{
+    $request->validate([
+        'precio' => 'required|in:ASC,DESC',
+        'categoria' => 'required'
+    ], [
+        'precio.required' => 'Debes elegir el orden del precio',
+        'precio.in' => 'El orden debe ser ASC o DESC',
+        'categoria.required' => 'La categoría es obligatoria'
+    ]);
 
-        $productoSeleccionado = Products::where('id', $request->input('showProduct'))->find($request->input('showProduct'));
-        $Productossugeridos = Products::where('marca', $productoSeleccionado->marca)->get()->random(6);
+    $brandsNombres = Products::brandsNombres();
+    $categoriesNombres = Products::categoriesNombres();
+    $marcas = Brands::all();
 
-        return view('categories.singleProduct', compact('productoSeleccionado', 'Productossugeridos', 'brandsNombres', 'categoriesNombres'));
-    }
+    $productos = Products::where('categoria', $request->categoria)
+        ->orderBy('precio', $request->precio)
+        ->paginate(6);
 
-    //------------------------------ PANTALLA DE COMPRA 
+    return view('categories.show', compact('productos', 'marcas', 'request', 'brandsNombres', 'categoriesNombres'));
+}
+
+public function singleProduct(Request $request)
+{
+    $request->validate([
+        'showProduct' => 'required|exists:products,id'
+    ], [
+        'showProduct.required' => 'Producto no especificado',
+        'showProduct.exists' => 'El producto no existe'
+    ]);
+
+    $brandsNombres = Products::brandsNombres();
+    $categoriesNombres = Products::categoriesNombres();
+
+    $productoSeleccionado = Products::findOrFail($request->input('showProduct'));
+
+    $Productossugeridos = Products::where('marca', $productoSeleccionado->marca)
+        ->inRandomOrder()
+        ->limit(6)
+        ->get();
+
+    return view('categories.singleProduct', compact('productoSeleccionado', 'Productossugeridos', 'brandsNombres', 'categoriesNombres'));
+}
 
     public function pantallaCompra()
     {
         return view('categories.pantallaCompra');
     }
 
-    //------------------------------ PANTALLA DE ADMINISTRACION PRODUCTOS ADMIN
-
     public function productosIndex()
     {
-        $allProducts = Products::all()->random(6); //Mostrar 6 productos aleatorios en Inicio
+        $allProducts = Products::inRandomOrder()->limit(6)->get();
+
         return view('categories.index', compact('allProducts'));
     }
 }

@@ -39,29 +39,62 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nombre' => ['required', 'string', 'min:4', 'max:20'],
-            'apellidos' => ['required', 'string', 'min:4', 'max:50'],
-            'mail' => ['required', 'string', 'min:6', 'max:50', 'unique:user,mail'],
-            'pass' => ['required', 'string', 'min:6', 'max:50']
-        ]);
-        try {
-            $data = $request->all();
-            $data['pass'] = Hash::make($request->pass); //Hash a la contraseña antes de crearlo
-            User::create($data);
-        } catch (\Exception $ex) {
-            return back();
-        }
-        $nuevoUser =  User::where('mail', '=', $data['mail'])->first();
+public function store(Request $request)
+{
+    $request->validate([
+        'nombre' => [
+            'required',
+            'string',
+            'min:4',
+            'max:20',
+            'regex:/^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/'
+        ],
+        'apellidos' => [
+            'required',
+            'string',
+            'min:4',
+            'max:50',
+            'regex:/^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/'
+        ],
+        'mail' => [
+            'required',
+            'email',
+            'max:50',
+            'unique:users,mail'
+        ],
+        'pass' => [
+            'required',
+            'string',
+            'min:6',
+            'max:50',
+            'confirmed'
+        ]
+    ], [
+        'nombre.regex' => 'El nombre solo puede tener letras',
+        'apellidos.regex' => 'Los apellidos solo pueden tener letras',
+        'mail.email' => 'Email no válido',
+        'mail.unique' => 'Este email ya existe',
+        'pass.confirmed' => 'Las contraseñas no coinciden'
+    ]);
 
-        $request->session()->put('user', $data['nombre']);
-        $request->session()->put('id', $nuevoUser->id);
+    try {
+        $data = $request->all();
+        $data['pass'] = Hash::make($request->pass);
 
-        $indexP = new ProductsController();
-        return $indexP->productosIndex(); //Mostrar index si sale correcto el registro
+        User::create($data);
+
+    } catch (\Exception $ex) {
+        return back()->withErrors(['general' => 'Error al registrar'])->withInput();
     }
+
+    $nuevoUser = User::where('mail', $data['mail'])->first();
+
+    $request->session()->put('user', $data['nombre']);
+    $request->session()->put('id', $nuevoUser->id);
+
+    $indexP = new ProductsController();
+    return $indexP->productosIndex();
+}
 
     /**
      * Display the specified resource.
@@ -94,30 +127,47 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
-    {
-        $request->validate([
-            'nombre' => ['required', 'string', 'min:3', 'max:50'],
-            'apellidos' => ['required', 'string', 'min:3', 'max:90'],
-            'mail' => ['required', 'string', 'min:3', 'max:120', 'unique:user,mail']
+public function update(Request $request, User $user)
+{
+    $request->validate([
+        'nombre' => [
+            'required',
+            'string',
+            'min:3',
+            'max:50',
+            'regex:/^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/'
+        ],
+        'apellidos' => [
+            'required',
+            'string',
+            'min:3',
+            'max:90',
+            'regex:/^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/'
+        ],
+        'mail' => [
+            'required',
+            'email',
+            'max:120',
+            'unique:users,mail,' . $user->id
+        ]
+    ]);
+
+    try {
+        User::where('id', $user->id)->update([
+            'nombre' => trim($request->nombre),
+            'apellidos' => trim($request->apellidos),
+            'mail' => $request->mail
         ]);
 
-        try {
-            User::where('id', $user->id)
-                ->update(
-                    [
-                        'nombre' => $request->input('nombre'),
-                        'apellidos' => $request->input('apellidos'),
-                        'mail' => $request->input('mail')
-                    ]
-                );
-            $request->session()->put('user', $request->nombre);
-        } catch (\Exception $ex) {
-            return back();
-        }
-        $index = new ProductsController();
-        return $index->productosindex();
+        $request->session()->put('user', $request->nombre);
+
+    } catch (\Exception $ex) {
+        return back()->withErrors(['general' => 'Error al actualizar'])->withInput();
     }
+
+    $index = new ProductsController();
+    return $index->productosIndex();
+}
 
     /**
      * Remove the specified resource from storage.
@@ -132,24 +182,33 @@ class UserController extends Controller
 
     //Comprobar users en login
     public function comprobar(Request $request)
-    {
-        $user = User::where('mail', '=', $request->mailLogin)->first();
-        if ($user != null && Hash::check($request->passLogin, $user->pass)) { //Si es correcto muestra Inicio
-            $nombre = User::where('mail', '=', $request->mailLogin)->first(); //Buscar el nombre de la cuenta que ha iniciado sesion para poder mostrar el nombre en el NAV
-            $id = User::where('mail', '=', $request->mailLogin)->first(); //Id del user
+{
+    $request->validate([
+        'mailLogin' => 'required|email',
+        'passLogin' => 'required'
+    ], [
+        'mailLogin.required' => 'El email es obligatorio',
+        'mailLogin.email' => 'Formato de email incorrecto',
+        'passLogin.required' => 'La contraseña es obligatoria'
+    ]);
 
-            //Guardar variables de sesion
-            $request->session()->put('user', $nombre->nombre);
-            $request->session()->put('tipoUsuario', $id->tipoUsuario);
-            $request->session()->put('id', $id->id);
+    $user = User::where('mail', $request->mailLogin)->first();
 
+    if ($user && Hash::check($request->passLogin, $user->pass)) {
 
-            $productos = new ProductsController();
-            return $productos->productosIndex();
-        } else { //Si es incorrecto redirigi a login de nuevo
-            return back();
-        }
+        $request->session()->put('user', $user->nombre);
+        $request->session()->put('tipoUsuario', $user->tipoUsuario);
+        $request->session()->put('id', $user->id);
+
+        $productos = new ProductsController();
+        return $productos->productosIndex();
+
+    } else {
+        return back()
+            ->withErrors(['login' => 'Credenciales incorrectas'])
+            ->withInput();
     }
+}
     //Cerrar Sesion
     public function logout(Request $request)
     {

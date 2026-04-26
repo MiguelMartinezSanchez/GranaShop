@@ -3,7 +3,15 @@
     <!-- CARROUSEL DE INICIO -->
     <div class="container">
         <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="3000">
-
+        @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
             <div class="carousel-inner">
                 <div class="item active">
                     <img src="/img/slider/slider-3.png" alt="moda-masculina" style="width:100%;">

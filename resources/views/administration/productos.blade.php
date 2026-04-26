@@ -1,53 +1,67 @@
 <x-plantilla>
     <x-slot name="titulo">Administración Productos</x-slot>
 
+    @if(session('success'))
+        <div class="alert alert-success text-center">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <h2 class="text-center">LISTADO DE PRODUCTOS</h2>
-    <a href="{{ route('adminProducts.create') }}" class="btn btn-danger"><i class="fas fa-plus"></i> Agregar Producto</a>
+
+    {{-- BOTÓN PDF --}}
+    <div class="mb-3 text-center">
+        <a href="{{ route('admin.products.pdf') }}" class="btn btn-success">
+            Descargar PDF
+        </a>
+    </div>
+
+    <a href="{{ route('adminProducts.create') }}" class="btn btn-danger">
+        Agregar Producto
+    </a>
 
     <div class="table-responsive-sm">
         <table class="table table-hover mt-2">
             <thead>
                 <tr>
-                    <th scope="col">Id</th>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Precio</th>
-                    <th scope="col">Foto</th>
-                    <th scope="col">Categoria ID</th>
-                    <th scope="col">Categoria</th>
-                    <th scope="col">Marca ID</th>
-                    <th scope="col">Marca Nombre</th>
-                    <th scope="col" colspan="2" class="text-center">Acciones</th>
+                    <th>Id</th>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Foto</th>
+                    <th>Categoria</th>
+                    <th>Marca</th>
+                    <th colspan="2">Acciones</th>
                 </tr>
             </thead>
+
             <tbody>
                 @foreach ($productos as $product)
                 <tr>
                     <td>{{ $product->id }}</td>
                     <td>{{ $product->nombre }}</td>
                     <td>{{ $product->precio }}</td>
-                    <td><img src="{{ $product->foto }}" /></td>
-                    <td>{{ $product->categoria }}</td>
+                    <td><img src="{{ $product->foto }}" width="80"></td>
                     <td>{{ $categoriesNombres[$product->categoria] }}</td>
-                    <td>{{ $product->marca}}</td>
                     <td>{{ $brandsNombres[$product->marca] }}</td>
 
-                    <td class="text-center">
-                        <a href="{{ route('adminProducts.edit', $product) }}" class="btn btn-danger"><i class="fas fa-edit"></i> Editar</a>
+                    <td>
+                        <a href="{{ route('adminProducts.edit', $product) }}" class="btn btn-warning">Editar</a>
                     </td>
-                    <td class="text-center">
-                        <form name="as" method="POST" action="{{ route('adminProducts.destroy', $product) }}">
-                            @method('DELETE')
+
+                    <td>
+                        <form method="POST" action="{{ route('adminProducts.destroy', $product) }}">
                             @csrf
-                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i>
-                                Borrar</button>
+                            @method('DELETE')
+                            <button class="btn btn-danger">Borrar</button>
                         </form>
                     </td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
-        <div class="m-5 text-center">
-            {{ $productos->withQueryString()->links() }}
+
+        <div class="text-center">
+            {{ $productos->links() }}
         </div>
     </div>
 </x-plantilla>

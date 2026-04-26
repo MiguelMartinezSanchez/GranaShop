@@ -1,31 +1,56 @@
 <x-plantilla>
     <x-slot name="titulo">GranaShop | Perfil</x-slot>
 
-    <div class="container align-content-center bg-white mt-5 mb-5">
-        <form name="sd" method="POST" action="{{ route('user.update', $usuario) }}">
+    <div class="container bg-white mt-5 mb-5">
+
+        {{-- ERRORES --}}
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('user.update', $usuario) }}">
             @csrf
             @method("PUT")
+
             <div class="row">
-                <div class="col-md-4 border-right">
-                    <div class="d-flex flex-column align-items-center text-center p-3 py-5">
-                        <img class="rounded-circle mt-5" width="150px" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg">
-                        <span class="font-weight-bold">{{ $usuario->nombre }}</span>
-                        <span class="text-black-50">{{ $usuario->mail }}</span>
-                    </div>
+                <div class="col-md-4 border-right text-center p-3">
+                    <img class="rounded-circle mt-3" width="150px"
+                        src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg">
+                    <h5>{{ $usuario->nombre }}</h5>
+                    <p>{{ $usuario->mail }}</p>
                 </div>
-                <div class="col-md-7 border-right">
-                    <div class="p-3 py-5">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h4 class="text-right">Ajustes de Perfil</h4>
+
+                <div class="col-md-8 p-3">
+                    <h4>Ajustes de Perfil</h4>
+
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label>Nombre</label>
+                            <input name="nombre" type="text" class="form-control"
+                                value="{{ old('nombre', $usuario->nombre) }}">
                         </div>
-                        <div class="row mt-2">
-                            <div class="col-md-6"><label class="labels">Nombre</label><input name="nombre" value="{{ $usuario->nombre }}" type="text" class="form-control"></div>
-                            <div class="col-md-6"><label class="labels">Apellidos</label><input name="apellidos" value="{{ $usuario->apellidos }}" type="text" class="form-control"></div>
+
+                        <div class="col-md-6">
+                            <label>Apellidos</label>
+                            <input name="apellidos" type="text" class="form-control"
+                                value="{{ old('apellidos', $usuario->apellidos) }}">
                         </div>
-                        <div class="row mt-3">
-                            <div class="col-md-12"><label class="labels">Correo Electrónico</label><input name="mail" value="{{ $usuario->mail }}" type="text" class="form-control"></div>
-                        </div>
-                        <div class="mt-5 text-center"><button class="btn btn-primary profile-button" type="submit">Save Profile</button></div>
+                    </div>
+
+                    <div class="mt-3">
+                        <label>Email</label>
+                        <input name="mail" type="email" class="form-control"
+                            value="{{ old('mail', $usuario->mail) }}">
+                    </div>
+
+                    <div class="mt-4 text-center">
+                        <button class="btn btn-primary">Guardar cambios</button>
                     </div>
                 </div>
             </div>

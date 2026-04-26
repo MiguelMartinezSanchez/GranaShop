@@ -11,6 +11,15 @@
         <div class="py-2 border-bottom ml-3">
             <h6 class="font-weight-bold">Precio</h6>
             <div id="orange"><span class="fa fa-minus"></span></div>
+                    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
             <form name="wddd" action="{{ route('products.filtroPrecio') }}" class="form-inline">
                 @csrf
                 <div class="input-group mb-3">

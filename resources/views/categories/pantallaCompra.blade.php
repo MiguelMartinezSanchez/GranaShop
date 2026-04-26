@@ -1,6 +1,14 @@
 <x-plantilla>
     <x-slot name="titulo">GranaShop | Detalles carrito</x-slot>
-
+        @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
     <div class="cart_section mt-4 mb-4">
         <div class="container-fluid">
             <div class="row">

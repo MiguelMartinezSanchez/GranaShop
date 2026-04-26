@@ -1,44 +1,63 @@
 <x-plantilla>
     <x-slot name="titulo">Administración Marcas</x-slot>
 
+    @if(session('success'))
+        <div class="alert alert-success text-center">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <h2 class="text-center">LISTADO DE MARCAS</h2>
-    <a href="{{ route('adminBrands.create') }}" class="btn btn-danger"><i class="fas fa-plus"></i> Agregar Marca</a>
+
+    {{-- BOTÓN PDF --}}
+    <div class="mb-3 text-center">
+        <a href="{{ route('admin.brands.pdf') }}" class="btn btn-success">
+            Descargar PDF
+        </a>
+    </div>
+
+    <a href="{{ route('adminBrands.create') }}" class="btn btn-danger">
+        Agregar Marca
+    </a>
+
     <div class="table-responsive-sm">
         <table class="table table-hover mt-2">
             <thead>
                 <tr>
-                    <th scope="col">Id</th>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Foto</th>
-                    <th scope="col">Descripcion</th>
-                    <th scope="col" colspan="2" class="text-center">Acciones</th>
+                    <th>Id</th>
+                    <th>Nombre</th>
+                    <th>Foto</th>
+                    <th>Descripcion</th>
+                    <th colspan="2" class="text-center">Acciones</th>
                 </tr>
             </thead>
+
             <tbody>
                 @foreach ($marcas as $marca)
                 <tr>
                     <td>{{ $marca->id }}</td>
                     <td>{{ $marca->nombre }}</td>
-                    <td><img src="{{ $marca->foto }}" /></td>
+                    <td><img src="{{ $marca->foto }}" width="80"></td>
                     <td>{{ $marca->descripcion }}</td>
 
-                    <td class="text-center">
-                        <a href="{{ route('adminBrands.edit', $marca) }}" class="btn btn-danger"><i class="fas fa-edit"></i> Editar</a>
+                    <td>
+                        <a href="{{ route('adminBrands.edit', $marca) }}" class="btn btn-warning">Editar</a>
                     </td>
-                    <td class="text-center">
-                        <form name="as" method="POST" action="{{ route('adminBrands.destroy', $marca) }}">
-                            @method('DELETE')
+
+                    <td>
+                        <form method="POST" action="{{ route('adminBrands.destroy', $marca) }}">
                             @csrf
-                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i>
-                                Borrar</button>
+                            @method('DELETE')
+                            <button class="btn btn-danger">Borrar</button>
                         </form>
                     </td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
-        <div class="m-5 text-center">
-            {{ $marcas->withQueryString()->links() }}
+
+        <div class="text-center">
+            {{ $marcas->links() }}
         </div>
     </div>
 </x-plantilla>
