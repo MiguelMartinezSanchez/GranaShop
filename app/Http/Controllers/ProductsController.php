@@ -34,11 +34,10 @@ public function store(Request $request)
 {
     // ✅ VALIDACIÓN
     $request->validate([
-        'nombre' => 'required|string|min:3|max:255',
+        'nombre' => 'required|string|min:3|max:25',
         'precio' => 'required|numeric|min:0|max:999999',
         'marca' => 'required|exists:brands,id',
         'categoria' => 'required|exists:categories,id',
-        'descripcion' => 'required|string|min:5',
         'foto' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048'
     ], [
         'nombre.required' => 'El nombre del producto es obligatorio',
@@ -56,9 +55,6 @@ public function store(Request $request)
         'categoria.required' => 'Debes seleccionar una categoría',
         'categoria.exists' => 'La categoría seleccionada no es válida',
 
-        'descripcion.required' => 'La descripción es obligatoria',
-        'descripcion.min' => 'La descripción debe tener al menos 5 caracteres',
-
         'foto.required' => 'Debes subir una imagen',
         'foto.image' => 'El archivo debe ser una imagen',
         'foto.mimes' => 'La imagen debe ser JPG, PNG o WEBP',
@@ -75,7 +71,6 @@ public function store(Request $request)
             'precio' => $request->precio,
             'marca' => $request->marca,
             'categoria' => $request->categoria,
-            'descripcion' => $request->descripcion,
             'foto' => $path
         ]);
 
